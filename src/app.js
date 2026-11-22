@@ -168,7 +168,11 @@ export function registerHandlers(
       }
       rows = await fetchRows(fetchImpl, resourceId, since);
     }
-    if (rows.length === 0 && now() - lastResolve >= RESOLVE_MS && (await resolve())) {
+    if (
+      rows.length === 0 &&
+      now() - lastResolve >= RESOLVE_MS &&
+      (await resolve().catch(() => false))
+    ) {
       rows = await fetchRows(fetchImpl, resourceId, since);
     }
     return groupEvents(rows);
@@ -482,6 +486,7 @@ export function registerHandlers(
       await reportStatus();
       throw new ActionFailure(MESSAGES.unreachable(lastError?.message ?? 'no answer'));
     }
+    gladys.requestWidgetRefresh(WIDGET_KEY);
     await publishStates();
     await reportStatus();
     const followed = events.filter((e) => config.directions.includes(e.direction));
