@@ -31,16 +31,21 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
-src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
-src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
-gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+index.js                          SDK wiring only: src/app.js registers the handlers before connect()
+src/app.js                        every SDK handler, the minute timer, reads, states, triggers, status
+src/api.js                        NESO Data Portal (CKAN): resource lookup, datastore query, row parsing
+src/events.js                     rows → events (date + Event ID), next, upcoming, in progress, last
+src/devices.js                    one device per kind of event (down, up): features and states
+src/widgets.js                    dashboard widget `next_event`
+src/i18n.js                       every text and feature name, in en, fr, de, es
+src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults), directions, warnings
+src/store.js                      /data/demand-flexibility-state.json (trigger memory)
+src/http.js                       fetch with timeout, errors with the status only
+src/issues.js                     a lasting failure logged once, its recovery once
+gladys-assistant-integration.json manifest: config, action, triggers, scene action, widget
+docs/{en,fr,de,es}.md             user documentation, same sections (test/i18n.test.js)
+test/                             node --test, against the SDK's fake Gladys and a fake portal serving
+                                  real answers (test/helpers/world.js, test/fixtures, 22/11/2026)
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -78,10 +83,32 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in four languages (English, French, German,
+  Spanish): action messages, manifest texts, feature names, widget texts, and
+  `docs/{en,fr,de,es}.md`, kept in sync. `test/i18n.test.js` enforces it.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
+
+# NESO Demand Flexibility : source et pièges propres à cette intégration
+
+- **Source** : portail CKAN `https://api.neso.energy/api/3/action`, jeu `demand-flexibility`, ressource
+  **« DFS Service Requirement »** (une ligne par demi-heure : `Event ID`, `Event Type` `Downwards`/`Upwards`,
+  `Event Tag` `Energy`/`System`, `Delivery Date`, `From_Local`/`To_Local`, `From_UTC`/`To_UTC`, MW, type
+  `Live`/`Test`, `Guaranteed Acceptance Price GBP per MWh`, presque toujours 0). Les autres
+  ressources (Utilisation Report, Summary) donnent les résultats après coup : non utilisées.
+- **Les `Event ID` repartent de 1 à chaque saison** (avril) : la clé d'un événement est `date#id`.
+- **La ressource change d'id à chaque saison** (l'ancienne devient « (Archive 2025/2026) ») : id connu le
+  22/11/2026 en repli, recherche par nom exact via `package_show` quand la requête échoue (au plus une fois par heure).
+- `datastore_search_sql` renvoie les numériques **en chaînes** (`"224"`, `"0"`) et un 409 avec
+  `success: false` pour une ressource inconnue. Le format de `DFS Submission Time_Local` varie
+  (`21-11-2026 12:00` / `14/04/2026 12:00`) : ignoré.
+- `Delivery Date` est la date **locale britannique** : en heure d'été, 00:30 local = 23:30 UTC la veille (corrigé
+  par l'écart heure locale / UTC) ; une fin `00:00` passe au lendemain.
+- Annonces le jour même vers 10 h–13 h pour 16 h–23 h (hiver 2026-27 : un événement presque chaque jour).
+  Lecture toutes les 10 min ; limites NESO : 1 req/s (CKAN), 2/min (datastore).
+- Le premier passage (pas de fichier sous `/data`) enregistre les événements existants sans déclencher
+  `event_announced` ni `event_ended`.
+- Axle Energy : aucune donnée ouverte sans compte, écarté.
 
 ---
 

@@ -1,45 +1,53 @@
 // -----------------------------------------------------------------------------
 // Integration configuration.
 //
-// The configuration is filled in by the user in Gladys, from the `config_schema`
-// declared in `gladys-assistant-integration.json`. The SDK fetches it for you
-// (`gladys.getConfig()`) and notifies you of every change through
-// `gladys.onConfigUpdated()`.
+// Filled in by the user in Gladys from the `config_schema` of
+// `gladys-assistant-integration.json`. This module provides the defaults and
+// normalizes the received object, so the rest of the code never deals with
+// `undefined` or with a value typed by hand.
 //
-// This module only provides defaults and normalizes the received object, so the
-// rest of the code never has to deal with `undefined`.
+// NESO publishes two kinds of Demand Flexibility Service events:
+//   - "Downwards" (turn-down): households and businesses are paid to use LESS
+//     electricity — the events behind the suppliers' "saving sessions";
+//   - "Upwards" (turn-up): paid to use MORE, when there is too much power.
+// Each kind followed is one device.
 // -----------------------------------------------------------------------------
 
+/** The languages of the Gladys interface, every text exists in all four. */
+export const LANGUAGES = ['en', 'fr', 'de', 'es'];
+
+/** Direction key (frozen: device ids and scene data use it) → NESO "Event Type". */
+export const DIRECTIONS = { down: 'Downwards', up: 'Upwards' };
+
+/** Warnings offered by the "starts soon" trigger, in minutes (frozen keys). */
+export const LEADS = ['5', '15', '30', '60', '120'];
+
 // Defaults: they MUST stay consistent with the `default` values declared in the
-// `config_schema` of the manifest.
+// `config_schema` of the manifest (test/manifest.test.js checks it).
 export const DEFAULT_CONFIG = {
-  latitude: 48.8566, // Paris
-  longitude: 2.3522,
-  unit: 'celsius', // 'celsius' | 'fahrenheit'
-  // Seconds between two reads of the polled sensors. Gladys polls at most once
-  // a minute: slower intervals are applied by skipping polls (see
-  // createPoller in src/devices/index.js).
-  poll_frequency: 300,
-  // Reserved key (NOT in config_schema): because the manifest declares both
-  // 'local' and 'cloud' in its `transports` field, Gladys shows a standard
-  // "Prefer the local connection" toggle and sends the user's choice here.
-  // Read-only for the integration; defaults to true.
-  GLADYS_PREFER_LOCAL: true,
+  // Language of the device and feature names (frozen when a device is added)
+  // and of the texts the container produces where Gladys does not say the
+  // user's language (scene events, text states, action messages).
+  language: 'fr',
+  follow_down: true,
+  follow_up: false,
 };
+
+const toBoolean = (value, fallback) =>
+  value === undefined || value === null || value === ''
+    ? fallback
+    : value === true || value === 'true' || value === 1 || value === '1';
 
 /**
  * Merge the user config with the defaults.
  * @param {Record<string, unknown>} raw config returned by the SDK
  */
 export function normalizeConfig(raw = {}) {
+  const language = String(raw.language ?? DEFAULT_CONFIG.language);
+  const followDown = toBoolean(raw.follow_down, DEFAULT_CONFIG.follow_down);
+  const followUp = toBoolean(raw.follow_up, DEFAULT_CONFIG.follow_up);
   return {
-    ...DEFAULT_CONFIG,
-    ...raw,
-    // Force the types: config may arrive as strings from a form.
-    latitude: Number(raw.latitude ?? DEFAULT_CONFIG.latitude),
-    longitude: Number(raw.longitude ?? DEFAULT_CONFIG.longitude),
-    poll_frequency: Number(raw.poll_frequency ?? DEFAULT_CONFIG.poll_frequency),
-    // The preference is a boolean; anything but an explicit false means true.
-    GLADYS_PREFER_LOCAL: raw.GLADYS_PREFER_LOCAL !== false,
+    language: LANGUAGES.includes(language) ? language : DEFAULT_CONFIG.language,
+    directions: [...(followDown ? ['down'] : []), ...(followUp ? ['up'] : [])],
   };
 }

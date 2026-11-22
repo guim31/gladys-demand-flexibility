@@ -1,0 +1,198 @@
+{
+  "success": true,
+  "result": {
+    "records": [
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "16:30",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "17:00",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "16:00",
+        "Event Type": "Downwards",
+        "To_Local": "17:30",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "17:00",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "17:30",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "16:30",
+        "Event Type": "Downwards",
+        "To_Local": "18:00",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "17:30",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "18:00",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "17:00",
+        "Event Type": "Downwards",
+        "To_Local": "18:30",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "18:00",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "18:30",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "17:30",
+        "Event Type": "Downwards",
+        "To_Local": "19:00",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "18:30",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "19:00",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "18:00",
+        "Event Type": "Downwards",
+        "To_Local": "19:30",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "19:00",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "19:30",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "18:30",
+        "Event Type": "Downwards",
+        "To_Local": "20:00",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "19:30",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "20:00",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "19:00",
+        "Event Type": "Downwards",
+        "To_Local": "20:30",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "20:00",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "20:30",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "19:30",
+        "Event Type": "Downwards",
+        "To_Local": "21:00",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "20:30",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "21:00",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "20:00",
+        "Event Type": "Downwards",
+        "To_Local": "21:30",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      },
+      {
+        "Guaranteed Acceptance Price GBP per MWh": "0",
+        "Event Tag": "Energy",
+        "To_UTC": "21:00",
+        "Delivery Date": "2026-04-14",
+        "From_Local": "21:30",
+        "DFS Submission Time_Local": "14/04/2026 12:00",
+        "Service Requirement Type": "Live",
+        "From_UTC": "20:30",
+        "Event Type": "Downwards",
+        "To_Local": "22:00",
+        "Service Requirement MW": 500,
+        "Event ID": "1"
+      }
+    ],
+    "fields": [
+      {
+        "type": "numeric",
+        "id": "Event ID"
+      },
+      {
+        "type": "text",
+        "id": "DFS Submission Time_Local"
+      },
+      {
+        "type": "text",
+        "id": "Event Type"
+      },
+      {
+        "type": "text",
+        "id": "Event Tag"
+      },
+      {
+        "type": "date",
+        "id": "Delivery Date"
+      },
+      {
+        "type": "text",
+        "id": "From_Local"
+      },
+      {
+        "type": "text",
+        "id": "To_Local"
+      },
+      {
+        "type": "text",
+        "id": "From_UTC"
+      },
+      {
+        "type": "text",
+        "id": "To_UTC"
+      },
+      {
+        "type": "int4",
+        "id": "Service Requirement MW"
+      },
+      {
+        "type": "text",
+        "id": "Service Requirement Type"
+      },
+      {
+        "type": "numeric",
+        "id": "Guaranteed Acceptance Price GBP per MWh"
+      }
+    ],
+    "sql": "SELECT \"Event ID\",\"DFS Submission Time_Local\",\"Event Type\",\"Event Tag\",\"Delivery Date\",\"From_Local\",\"To_Local\",\"From_UTC\",\"To_UTC\",\"Service Requirement MW\",\"Service Requirement Type\",\"Guaranteed Acceptance Price GBP per MWh\" FROM \"3635fd80-49d7-4d02-964d-cc8c08d50302\" WHERE \"Delivery Date\" = '2026-04-14' ORDER BY \"From_UTC\""
+  }
+}
