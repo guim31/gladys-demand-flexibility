@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "result": {
+    "records": [],
+    "fields": [
+      {
+        "type": "numeric",
+        "id": "Event ID"
+      },
+      {
+        "type": "text",
+        "id": "DFS Submission Time_Local"
+      },
+      {
+        "type": "text",
+        "id": "Event Type"
+      },
+      {
+        "type": "text",
+        "id": "Event Tag"
+      },
+      {
+        "type": "date",
+        "id": "Delivery Date"
+      },
+      {
+        "type": "text",
+        "id": "From_Local"
+      },
+      {
+        "type": "text",
+        "id": "To_Local"
+      },
+      {
+        "type": "text",
+        "id": "From_UTC"
+      },
+      {
+        "type": "text",
+        "id": "To_UTC"
+      },
+      {
+        "type": "int4",
+        "id": "Service Requirement MW"
+      },
+      {
+        "type": "text",
+        "id": "Service Requirement Type"
+      },
+      {
+        "type": "numeric",
+        "id": "Guaranteed Acceptance Price GBP per MWh"
+      }
+    ],
+    "sql": "SELECT \"Event ID\",\"DFS Submission Time_Local\",\"Event Type\",\"Event Tag\",\"Delivery Date\",\"From_Local\",\"To_Local\",\"From_UTC\",\"To_UTC\",\"Service Requirement MW\",\"Service Requirement Type\",\"Guaranteed Acceptance Price GBP per MWh\" FROM \"3635fd80-49d7-4d02-964d-cc8c08d50302\" WHERE \"Delivery Date\" >= '2026-11-23'"
+  }
+}

@@ -30,6 +30,14 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+The integration stores no secret: the NESO Data Portal needs no key. It keeps
+one small file under `/data` (`demand-flexibility-state.json`: the keys of the
+events already announced, warned about or ended, so a restart does not fire
+the scene triggers again). It only calls `https://api.neso.energy` over HTTPS
+(the CKAN `package_show` and `datastore_search_sql` actions, with a query built
+by the code from a checked resource id and date), sends nothing about the user,
+and opens no port.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+and the NESO Data Portal.

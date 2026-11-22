@@ -1,177 +1,600 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "NESO Demand Flexibility",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Demand Flexibility Service events of the British grid (NESO): next event, alerts, widget.",
+    "fr": "Événements Demand Flexibility du réseau britannique (NESO) : prochain événement, alertes, widget.",
+    "de": "Demand-Flexibility-Ereignisse des britischen Netzes (NESO): nächstes Ereignis, Alarme, Widget.",
+    "es": "Eventos Demand Flexibility de la red británica (NESO): próximo evento, alertas, widget."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
-  "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "docker_image": "ghcr.io/guim31/gladys-demand-flexibility:1.0.0",
+  "gladys_version": ">=5.3.0",
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-demand-flexibility/main/cover.png",
+  "categories": ["energy"],
+  "countries": ["GB"],
+  "transports": ["local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Open data from NESO",
+        "fr": "Les données ouvertes de NESO",
+        "de": "Offene Daten von NESO",
+        "es": "Datos abiertos de NESO"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "The events of NESO's Demand Flexibility Service (behind the suppliers' saving sessions), read from the NESO Data Portal: no account, no key. Not affiliated with NESO.",
+        "fr": "Les événements du Demand Flexibility Service de NESO (derrière les « saving sessions » des fournisseurs), lus sur le portail de données de NESO : ni compte ni clé. Sans lien avec NESO.",
+        "de": "Die Ereignisse des Demand Flexibility Service von NESO (hinter den „Saving Sessions“ der Versorger), aus dem NESO-Datenportal: kein Konto, kein Schlüssel. Nicht mit NESO verbunden.",
+        "es": "Los eventos del Demand Flexibility Service de NESO (detrás de las «saving sessions» de los proveedores), leídos en el portal de datos de NESO: sin cuenta ni clave. Sin relación con NESO."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://www.neso.energy/data-portal/demand-flexibility",
+          "label": {
+            "en": "NESO Data Portal",
+            "fr": "Portail de données NESO",
+            "de": "NESO-Datenportal",
+            "es": "Portal de datos de NESO"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
-    },
-    {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
+      "key": "language",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "label": {
+        "en": "Language of the names",
+        "fr": "Langue des noms",
+        "de": "Sprache der Namen",
+        "es": "Idioma de los nombres"
+      },
+      "description": {
+        "en": "Language of the device and feature names (fixed when a device is added) and of the texts sent to scenes.",
+        "fr": "Langue des noms d'appareils et de fonctionnalités (figés à l'ajout d'un appareil) et des textes envoyés aux scènes.",
+        "de": "Sprache der Geräte- und Funktionsnamen (beim Hinzufügen festgelegt) und der Texte für Szenen.",
+        "es": "Idioma de los nombres de dispositivos y funciones (fijados al añadir un dispositivo) y de los textos enviados a las escenas."
+      },
       "required": false,
-      "default": "celsius",
+      "default": "fr",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "follow_down",
+      "type": "boolean",
+      "label": {
+        "en": "Events to use less (turn-down)",
+        "fr": "Événements pour consommer moins",
+        "de": "Ereignisse zum Stromsparen",
+        "es": "Eventos para consumir menos"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "The usual events: paid to reduce consumption, as in the suppliers' saving sessions. One device.",
+        "fr": "Les événements habituels : rémunérés pour réduire sa consommation, comme les « saving sessions » des fournisseurs. Un appareil.",
+        "de": "Die üblichen Ereignisse: Geld fürs Senken des Verbrauchs, wie bei den „Saving Sessions“ der Versorger. Ein Gerät.",
+        "es": "Los eventos habituales: remunerados por reducir el consumo, como las «saving sessions» de los proveedores. Un dispositivo."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": true
+    },
+    {
+      "key": "follow_up",
+      "type": "boolean",
+      "label": {
+        "en": "Events to use more (turn-up)",
+        "fr": "Événements pour consommer plus",
+        "de": "Ereignisse zum Mehrverbrauch",
+        "es": "Eventos para consumir más"
+      },
+      "description": {
+        "en": "Rarer: paid to increase consumption when the grid has too much power. One device.",
+        "fr": "Plus rares : rémunérés pour augmenter sa consommation quand le réseau a trop d'électricité. Un appareil.",
+        "de": "Seltener: Geld fürs Erhöhen des Verbrauchs, wenn das Netz zu viel Strom hat. Ein Gerät.",
+        "es": "Más raros: remunerados por aumentar el consumo cuando la red tiene demasiada electricidad. Un dispositivo."
+      },
+      "required": false,
+      "default": false
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "timeout_seconds": 60
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "event_announced",
+      "label": {
+        "en": "New event announced",
+        "fr": "Nouvel événement annoncé",
+        "de": "Neues Ereignis angekündigt",
+        "es": "Nuevo evento anunciado"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "NESO publishes a new event of this kind (usually around noon, for the same day).",
+        "fr": "NESO publie un nouvel événement de ce type (en général vers midi, pour le jour même).",
+        "de": "NESO veröffentlicht ein neues Ereignis dieser Art (meist gegen Mittag, für denselben Tag).",
+        "es": "NESO publica un nuevo evento de este tipo (normalmente hacia mediodía, para el mismo día)."
       },
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
+          "label": {
+            "en": "Kind of event",
+            "fr": "Type d'événement",
+            "de": "Art des Ereignisses",
+            "es": "Tipo de evento"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "day",
+          "type": "string",
+          "label": {
+            "en": "Day",
+            "fr": "Jour",
+            "de": "Tag",
+            "es": "Día"
+          }
         },
         {
-          "key": "target",
+          "key": "start_time",
+          "type": "string",
+          "label": {
+            "en": "Start time",
+            "fr": "Heure de début",
+            "de": "Startzeit",
+            "es": "Hora de inicio"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End time",
+            "fr": "Heure de fin",
+            "de": "Endzeit",
+            "es": "Hora de fin"
+          }
+        },
+        {
+          "key": "duration_minutes",
+          "type": "number",
+          "label": {
+            "en": "Length (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
+        },
+        {
+          "key": "minutes_until",
+          "type": "number",
+          "label": {
+            "en": "Minutes until it starts",
+            "fr": "Minutes avant le début",
+            "de": "Minuten bis zum Beginn",
+            "es": "Minutos hasta el inicio"
+          }
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Guaranteed price (£/MWh, 0: none)",
+            "fr": "Prix garanti (£/MWh, 0 : aucun)",
+            "de": "Garantierter Preis (£/MWh, 0: keiner)",
+            "es": "Precio garantizado (£/MWh, 0: ninguno)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "event_starting_soon",
+      "label": {
+        "en": "Event starts soon",
+        "fr": "Événement imminent",
+        "de": "Ereignis beginnt bald",
+        "es": "El evento empieza pronto"
+      },
+      "description": {
+        "en": "An event starts within the chosen time. Once per event and per time chosen.",
+        "fr": "Un événement commence dans le délai choisi. Une fois par événement et par délai choisi.",
+        "de": "Ein Ereignis beginnt innerhalb der gewählten Zeit. Einmal pro Ereignis und gewählter Zeit.",
+        "es": "Un evento empieza dentro del plazo elegido. Una vez por evento y por plazo elegido."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Kind of event",
+            "fr": "Type d'événement",
+            "de": "Art des Ereignisses",
+            "es": "Tipo de evento"
+          }
+        },
+        {
+          "key": "lead",
           "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "label": {
+            "en": "Warn before",
+            "fr": "Prévenir avant",
+            "de": "Warnen vor",
+            "es": "Avisar antes de"
+          },
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            {
+              "value": "5",
+              "label": {
+                "en": "5 min",
+                "fr": "5 min",
+                "de": "5 Min.",
+                "es": "5 min"
+              }
+            },
+            {
+              "value": "15",
+              "label": {
+                "en": "15 min",
+                "fr": "15 min",
+                "de": "15 Min.",
+                "es": "15 min"
+              }
+            },
+            {
+              "value": "30",
+              "label": {
+                "en": "30 min",
+                "fr": "30 min",
+                "de": "30 Min.",
+                "es": "30 min"
+              }
+            },
+            {
+              "value": "60",
+              "label": {
+                "en": "1 h",
+                "fr": "1 h",
+                "de": "1 h",
+                "es": "1 h"
+              }
+            },
+            {
+              "value": "120",
+              "label": {
+                "en": "2 h",
+                "fr": "2 h",
+                "de": "2 h",
+                "es": "2 h"
+              }
+            }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "start_time",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Start time",
+            "fr": "Heure de début",
+            "de": "Startzeit",
+            "es": "Hora de inicio"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End time",
+            "fr": "Heure de fin",
+            "de": "Endzeit",
+            "es": "Hora de fin"
+          }
+        },
+        {
+          "key": "duration_minutes",
+          "type": "number",
+          "label": {
+            "en": "Length (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
+        },
+        {
+          "key": "minutes_until",
+          "type": "number",
+          "label": {
+            "en": "Minutes until it starts",
+            "fr": "Minutes avant le début",
+            "de": "Minuten bis zum Beginn",
+            "es": "Minutos hasta el inicio"
+          }
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Guaranteed price (£/MWh, 0: none)",
+            "fr": "Prix garanti (£/MWh, 0 : aucun)",
+            "de": "Garantierter Preis (£/MWh, 0: keiner)",
+            "es": "Precio garantizado (£/MWh, 0: ninguno)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "event_ended",
+      "label": {
+        "en": "Event ended",
+        "fr": "Événement terminé",
+        "de": "Ereignis beendet",
+        "es": "Evento terminado"
+      },
+      "description": {
+        "en": "An event of this kind is over: back to normal consumption.",
+        "fr": "Un événement de ce type est terminé : retour à la consommation normale.",
+        "de": "Ein Ereignis dieser Art ist vorbei: zurück zum normalen Verbrauch.",
+        "es": "Un evento de este tipo ha terminado: vuelta al consumo normal."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Kind of event",
+            "fr": "Type d'événement",
+            "de": "Art des Ereignisses",
+            "es": "Tipo de evento"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "start_time",
+          "type": "string",
+          "label": {
+            "en": "Start time",
+            "fr": "Heure de début",
+            "de": "Startzeit",
+            "es": "Hora de inicio"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End time",
+            "fr": "Heure de fin",
+            "de": "Endzeit",
+            "es": "Hora de fin"
+          }
+        },
+        {
+          "key": "duration_minutes",
+          "type": "number",
+          "label": {
+            "en": "Length (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "get_next_event",
+      "label": {
+        "en": "Get the next event",
+        "fr": "Lire le prochain événement",
+        "de": "Nächstes Ereignis abrufen",
+        "es": "Obtener el próximo evento"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "The event in progress or the next one, for the following actions. Fails when none is announced.",
+        "fr": "L'événement en cours ou le prochain, pour les actions suivantes. Échoue si aucun n'est annoncé.",
+        "de": "Das laufende oder nächste Ereignis, für die folgenden Aktionen. Schlägt fehl, wenn keines angekündigt ist.",
+        "es": "El evento en curso o el próximo, para las acciones siguientes. Falla si no hay ninguno anunciado."
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "label": {
+            "en": "Kind of event",
+            "fr": "Type d'événement",
+            "de": "Art des Ereignisses",
+            "es": "Tipo de evento"
+          },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "day",
+          "type": "string",
+          "label": {
+            "en": "Day",
+            "fr": "Jour",
+            "de": "Tag",
+            "es": "Día"
+          }
+        },
+        {
+          "key": "start_time",
+          "type": "string",
+          "label": {
+            "en": "Start time",
+            "fr": "Heure de début",
+            "de": "Startzeit",
+            "es": "Hora de inicio"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End time",
+            "fr": "Heure de fin",
+            "de": "Endzeit",
+            "es": "Hora de fin"
+          }
+        },
+        {
+          "key": "minutes_until",
+          "type": "number",
+          "label": {
+            "en": "Minutes until it starts",
+            "fr": "Minutes avant le début",
+            "de": "Minuten bis zum Beginn",
+            "es": "Minutos hasta el inicio"
+          }
+        },
+        {
+          "key": "duration_minutes",
+          "type": "number",
+          "label": {
+            "en": "Length (minutes)",
+            "fr": "Durée (minutes)",
+            "de": "Dauer (Minuten)",
+            "es": "Duración (minutos)"
+          }
+        },
+        {
+          "key": "in_progress",
+          "type": "number",
+          "label": {
+            "en": "In progress (1) or not (0)",
+            "fr": "En cours (1) ou non (0)",
+            "de": "Läuft (1) oder nicht (0)",
+            "es": "En curso (1) o no (0)"
+          }
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Guaranteed price (£/MWh, 0: none)",
+            "fr": "Prix garanti (£/MWh, 0 : aucun)",
+            "de": "Garantierter Preis (£/MWh, 0: keiner)",
+            "es": "Precio garantizado (£/MWh, 0: ninguno)"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "next_event",
+      "label": {
+        "en": "Next DFS event",
+        "fr": "Prochain événement DFS",
+        "de": "Nächstes DFS-Ereignis",
+        "es": "Próximo evento DFS"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "The event in progress or the next one, the upcoming ones and the last one.",
+        "fr": "L'événement en cours ou le prochain, ceux à venir et le dernier.",
+        "de": "Das laufende oder nächste Ereignis, die anstehenden und das letzte.",
+        "es": "El evento en curso o el próximo, los siguientes y el último."
+      },
+      "icon": "zap",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Kind of event",
+            "fr": "Type d'événement",
+            "de": "Art des Ereignisses",
+            "es": "Tipo de evento"
+          },
+          "required": false
+        },
+        {
+          "key": "show_upcoming",
+          "type": "boolean",
+          "label": {
+            "en": "Show the upcoming events",
+            "fr": "Afficher les événements à venir",
+            "de": "Anstehende Ereignisse anzeigen",
+            "es": "Mostrar los eventos próximos"
+          },
+          "required": false,
+          "default": true
+        },
+        {
+          "key": "show_last",
+          "type": "boolean",
+          "label": {
+            "en": "Show the last event",
+            "fr": "Afficher le dernier événement",
+            "de": "Letztes Ereignis anzeigen",
+            "es": "Mostrar el último evento"
+          },
+          "required": false,
+          "default": true
+        }
+      ]
     }
   ]
 }

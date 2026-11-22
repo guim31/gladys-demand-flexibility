@@ -1,0 +1,60 @@
+{
+  "success": true,
+  "result": {
+    "name": "demand-flexibility",
+    "title": "Demand Flexibility Service",
+    "license_title": "NESO Open Data Licence",
+    "metadata_modified": "2026-11-22T10:56:50.183253",
+    "resources": [
+      {
+        "id": "f5605e2b-b677-424c-8df7-d0ce4ee03cef",
+        "name": "DFS Service Requirement (Archive 2025/2026)",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-03-27T10:45:09.034050"
+      },
+      {
+        "id": "3d042450-b556-450f-a4b5-cdb075cdf9c1",
+        "name": "DFS Industry Notification (Archive 2025/2026)",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-03-27T10:44:31.904341"
+      },
+      {
+        "id": "cc36fff5-5f6f-4fde-8932-c935d982ecd8",
+        "name": "DFS Utilisation Report (Archive 2025/2026)",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-03-27T12:04:05.656144"
+      },
+      {
+        "id": "25698259-0b66-42f0-ac59-ef0df5245812",
+        "name": "DFS Utilisation Report Summary (Archive 2025/2026)",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-04-09T08:55:59.349201"
+      },
+      {
+        "id": "3635fd80-49d7-4d02-964d-cc8c08d50302",
+        "name": "DFS Service Requirement",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-11-22T10:56:50.094219"
+      },
+      {
+        "id": "705e573c-ddac-4675-b410-82916b35c4fe",
+        "name": "DFS Utilisation Report Summary",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-11-21T12:08:27.684200"
+      },
+      {
+        "id": "3ebf77d7-05df-466e-a023-dc45a90efeea",
+        "name": "DFS Utilisation Report",
+        "format": "CSV",
+        "datastore_active": true,
+        "last_modified": "2026-11-21T12:07:33.427553"
+      }
+    ]
+  }
+}

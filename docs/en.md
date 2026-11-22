@@ -1,61 +1,139 @@
-# Demo Devices Template
+# NESO Demand Flexibility
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+The events of the **Demand Flexibility Service** (DFS) of NESO, Great Britain's
+National Energy System Operator: half-hours when households and businesses
+signed up through their supplier (Octopus "Saving Sessions" and others) are
+paid to change their consumption. The data comes from the open
+[NESO Data Portal](https://www.neso.energy/data-portal/demand-flexibility).
+This integration is not affiliated with NESO, nor with any supplier.
 
-## What you get
+## Overview
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+NESO publishes two kinds of events, each followed as one device:
+
+- **turn-down** ("reduce"): use less electricity during the event — the usual
+  ones, behind the saving sessions;
+- **turn-up** ("increase"): use more, when the grid has too much power (rarer).
+
+Events are announced the same day, usually between 10 am and 1 pm, for the
+afternoon and evening (for example 16:00–20:00). Each device shows whether an
+event is in progress, the next one and the number announced. A dashboard
+widget, three scene triggers and a scene action make it easy to shift the
+washing machine, the car charge or the heating.
+
+Whether **your** household is paid depends on your supplier and on joining the
+event with it: the integration only says what NESO asked for.
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- Gladys must reach `api.neso.energy` on the internet. No account, no key: the
+  data is open, under the NESO Open Data Licence.
+- The service covers Great Britain (England, Scotland, Wales).
 
 ## Configuration
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+1. Install the integration (**Integrations → Install from GitHub**, then
+   `https://github.com/guim31/gladys-demand-flexibility`).
+2. In its **Configuration** tab:
+   - **Language of the names**: language of the device and feature names
+     (fixed when a device is added) and of the texts sent to scenes;
+   - **Events to use less (turn-down)**: on by default;
+   - **Events to use more (turn-up)**: off by default.
+3. Save, then add the devices from the **Discovery** tab.
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+### Test the connection button
 
-## Actions
+Reads the NESO Data Portal at once and shows how many events are announced and
+the next one, or the error in red.
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+## Devices
+
+### Demand Flexibility (one per kind of event)
+
+| Feature                  | Value                                                    |
+| ------------------------ | -------------------------------------------------------- |
+| Event in progress        | 1 during an event, 0 otherwise                           |
+| Upcoming events          | events announced and not started yet                     |
+| Next event start         | day and time, for example `Sat 21/11 16:00`, or "none"   |
+| Next event end           | time, for example `20:00`                                |
+| Guaranteed price (£/MWh) | the guaranteed acceptance price set by NESO, 0 when none |
+
+"Next event" is the event in progress, or else the next one. NESO rarely sets a
+guaranteed price; what your supplier pays you is not published.
+
+## Widget
+
+**Next DFS event** shows, for the kind chosen in its settings (the first one by
+default): the event in progress and when it ends, or the next event and when it
+starts, the guaranteed price if any, the other upcoming events and the last
+event over. Two settings hide the upcoming events and the last event.
 
 ## Scenes
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+### New event announced (trigger)
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+Fires when NESO publishes an event not seen before. Filter: the kind of event.
+Variables: `day`, `start_time`, `end_time`, `duration_minutes`,
+`minutes_until`, `price`. The events already published when the integration
+starts for the first time do not fire it.
 
-## Dashboard
+### Event starts soon (trigger)
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+Fires once per event and per warning chosen: 5, 15, 30 minutes, 1 or 2 hours
+before it starts. An event announced late fires the warnings already passed
+at once. Filters: the kind of event, the warnings. Variables: `start_time`,
+`end_time`, `duration_minutes`, `minutes_until`, `price`.
+
+### Event ended (trigger)
+
+Fires once at the end of each event (within two hours). Filter: the kind of
+event. Variables: `start_time`, `end_time`, `duration_minutes`.
+
+### Get the next event (action)
+
+Returns the event in progress or the next one for the following actions:
+`day`, `start_time`, `end_time`, `minutes_until`, `duration_minutes`,
+`in_progress` (1 or 0) and `price`. It fails, in red, when no event is
+announced.
+
+## Scene examples
+
+- **New event announced** → send yourself "Saving session today:" followed by
+  `start_time` and `end_time`, picked in the variable list.
+- **Event starts soon** (30 minutes) → switch the water heater off and lower
+  the heating set point; **Event ended** → put them back.
+- **Event starts soon** on turn-up events → start the electric car charge.
+
+## Limits
+
+- The integration reads the portal every 10 minutes (one small query), only
+  when a device is added or the widget is displayed. NESO asks for no more than
+  1 request per second to its API and 2 per minute to its datastore: far
+  above this use.
+- NESO also publishes rare test events (about one hour, a few a year): they
+  are shown and fire the triggers like the others.
+- NESO publishes the events as planned; it can cancel or change one, which the
+  next reading shows.
+- If the portal is unreachable, the devices keep the last events read (an event
+  still starts and ends on time), and the Configuration screen says it.
+- Times are shown in the time zone of Gladys.
+- Developed and tested against the live NESO Data Portal, not yet on a
+  household taking part in the service: feedback welcome.
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **No device in Discovery**: no kind of event is followed; tick one in the
+  configuration.
+- **"The NESO Data Portal cannot be reached"**: check the internet access of
+  Gladys, then use **Test the connection**.
+- **No event for days**: NESO only calls events when the grid needs them; the
+  widget shows the last one.
+- Logs: the integration logs its start, new events and failures. For more
+  detail, set the `LOG_LEVEL=debug` environment variable.
+
+## Credits
+
+Data: NESO Data Portal, "Demand Flexibility Service" dataset, NESO Open Data
+Licence — "Supported by National Energy System Operator open data". This
+integration is not affiliated with NESO.
