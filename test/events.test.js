@@ -13,7 +13,7 @@ test('the week of 16–22/11/2026 holds 5 turn-down and 2 turn-up events', () =>
   assert.equal(events.filter((e) => e.direction === 'down').length, 5);
   assert.equal(events.filter((e) => e.direction === 'up').length, 2);
   const last = events.at(-2);
-  assert.equal(last.key, '2026-11-21#224');
+  assert.equal(last.key, '2026-11-21#224#down');
   assert.equal(iso(last.start), '2026-11-21T16:00:00.000Z');
   assert.equal(iso(last.end), '2026-11-21T20:00:00.000Z');
   assert.equal(last.slots.length, 8);
@@ -113,16 +113,16 @@ test('unusable rows are skipped', () => {
 
 test('next, upcoming, in progress, last', () => {
   const down = groupEvents(WEEK_BODY.result.records).filter((e) => e.direction === 'down');
-  assert.equal(nextEvent(down, START).key, '2026-11-21#224');
+  assert.equal(nextEvent(down, START).key, '2026-11-21#224#down');
   assert.equal(upcoming(down, START).length, 2);
   assert.equal(isActive(nextEvent(down, START), START), false);
-  assert.equal(lastEnded(down, START).key, '2026-11-20#223');
+  assert.equal(lastEnded(down, START).key, '2026-11-20#223#down');
   const during = Date.parse('2026-11-21T17:00:00Z');
   assert.equal(isActive(nextEvent(down, during), during), true);
   assert.equal(upcoming(down, during).length, 1);
   const after = Date.parse('2026-11-21T20:00:00Z');
-  assert.equal(nextEvent(down, after).key, '2026-11-22#225');
-  assert.equal(lastEnded(down, after).key, '2026-11-21#224');
+  assert.equal(nextEvent(down, after).key, '2026-11-22#225#down');
+  assert.equal(lastEnded(down, after).key, '2026-11-21#224#down');
   const later = Date.parse('2026-11-22T21:00:00Z');
   assert.equal(nextEvent(down, later), null);
 });

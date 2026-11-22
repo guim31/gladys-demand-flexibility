@@ -111,6 +111,8 @@ announced.
   when a device is added or the widget is displayed. NESO asks for no more than
   1 request per second to its API and 2 per minute to its datastore: far
   above this use.
+- NESO also publishes rare test events (about one hour, a few a year): they
+  are shown and fire the triggers like the others.
 - NESO publishes the events as planned; it can cancel or change one, which the
   next reading shows.
 - If the portal is unreachable, the devices keep the last events read (an event

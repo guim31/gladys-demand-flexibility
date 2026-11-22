@@ -164,7 +164,7 @@ test('reads every 10 minutes on its own timer, never through onPoll', async (t) 
     await world.app.tick();
   }
   assert.equal(world.api.count('datastore_search_sql'), 2);
-  assert.equal(world.api.count('package_show'), 0);
+  assert.equal(world.api.count('package_show'), 1, 'the resource is looked up once a day');
 });
 
 test('no reading while no device is added and no widget is shown', async (t) => {
@@ -233,6 +233,46 @@ test('NESO archives the resource: found again by its name', async (t) => {
   assert.equal(world.api.count('package_show'), 1);
 });
 
+test('a season archived: the old resource answers without rows, the new one is found within a day', async (t) => {
+  const api = createFakeApi();
+  const world = await createWorld({ api });
+  t.after(() => world.app.stop());
+  // April: NESO renames the resource "(Archive …)" and starts a new one. The
+  // old one keeps answering, empty for the last 14 days.
+  const NEW_ID = '11111111-2222-4333-8444-555555555555';
+  api.packageBody = structuredClone(api.packageBody);
+  for (const resource of api.packageBody.result.resources) {
+    if (resource.id === KNOWN_RESOURCE_ID) {
+      resource.name = 'DFS Service Requirement (Archive 2026/2027)';
+    }
+  }
+  api.packageBody.result.resources.push({ id: NEW_ID, name: 'DFS Service Requirement' });
+  const answer = api.answer;
+  api.answer = (url) => {
+    if (url.includes('datastore_search_sql') && url.includes(KNOWN_RESOURCE_ID)) {
+      return answer(url).status === 200 ? new Response(JSON.stringify(EMPTY_BODY)) : answer(url);
+    }
+    return url.includes(NEW_ID) ? new Response(JSON.stringify(api.body)) : answer(url);
+  };
+  world.clock.advance(61 * MINUTE);
+  await world.app.tick({ force: true });
+  assert.equal(stateOf(world, 'down', 'upcoming_count'), 1);
+  assert.equal(api.count(NEW_ID), 1);
+});
+
+test('the very first reading does not fire warnings already passed', async (t) => {
+  // 15:30, event 224 at 16:00: the 30, 60 and 120 warnings are past.
+  const world = await createWorld({ clock: createClock(Date.UTC(2026, 10, 21, 15, 30)) });
+  t.after(() => world.app.stop());
+  assert.deepEqual(world.fake.sceneEvents, []);
+  world.clock.advance(16 * MINUTE);
+  await world.app.tick();
+  assert.deepEqual(
+    keys(world, SOON_TRIGGER_KEY).map((e) => e.data.lead),
+    ['15'],
+  );
+});
+
 test('test action: success message, and a red error when NESO is down', async (t) => {
   const api = createFakeApi();
   const world = await createWorld({ api, config: { language: 'en' } });
@@ -248,6 +288,9 @@ test('test action: success message, and a red error when NESO is down', async (t
     'NESO joint : 1 événement(s) à venir, prochain : sam. 21/11 16:00–20:00',
   );
   api.down = true;
+  const reused = await world.fake.action('test_connection', {});
+  assert.equal(reused.success, true, 'a click within 30 s reuses the reading');
+  world.clock.advance(31 * 1000);
   const ko = await world.fake.action('test_connection', {});
   assert.equal(ko.success, false);
   assert.match(ko.error.fr, /^Le portail de données de NESO est injoignable/);

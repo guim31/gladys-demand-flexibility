@@ -114,6 +114,8 @@ Devuelve el evento en curso o el próximo para las acciones siguientes: `day`,
   hay un dispositivo añadido o el widget está a la vista. NESO pide como mucho
   1 petición por segundo a su API y 2 por minuto a su datastore: muy por encima
   de este uso.
+- NESO publica también raros eventos de prueba (una hora aproximadamente, pocos
+  al año): se muestran y activan las escenas como los demás.
 - NESO publica los eventos previstos; puede anular o cambiar uno, lo que
   muestra la lectura siguiente.
 - Si el portal no está disponible, los dispositivos conservan los últimos

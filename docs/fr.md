@@ -116,6 +116,8 @@ annoncé.
   seulement si un appareil est ajouté ou si le widget est affiché. NESO demande
   au plus 1 requête par seconde à son API et 2 par minute à son datastore :
   très loin de cet usage.
+- NESO publie aussi de rares événements de test (une heure environ, quelques-uns
+  par an) : ils s'affichent et déclenchent les scènes comme les autres.
 - NESO publie les événements prévus ; il peut en annuler ou en modifier un, ce
   que montre la lecture suivante.
 - Si le portail est injoignable, les appareils gardent les derniers événements

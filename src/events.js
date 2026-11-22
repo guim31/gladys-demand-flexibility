@@ -8,7 +8,7 @@ import { parseRow } from './api.js';
 
 /**
  * @typedef {object} DfsEvent
- * @property {string} key "2026-11-21#224": stable, used by the trigger memory
+ * @property {string} key "2026-11-21#224#down": stable, used by the trigger memory
  * @property {number} id
  * @property {string} date British delivery date
  * @property {'down' | 'up'} direction
@@ -33,12 +33,12 @@ export function groupEvents(rows) {
       continue;
     }
     // Same date and id for both directions has never been seen, but the key
-    // keeps them apart if it happens.
+    // (also the trigger memory key) keeps them apart if it happens.
     const key = `${slot.key}#${slot.direction}`;
     let event = byKey.get(key);
     if (!event) {
       event = {
-        key: slot.key,
+        key,
         id: slot.id,
         date: slot.date,
         direction: slot.direction,

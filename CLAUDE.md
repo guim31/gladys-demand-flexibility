@@ -97,8 +97,12 @@ test/                             node --test, against the SDK's fake Gladys and
   `Live`/`Test`, `Guaranteed Acceptance Price GBP per MWh`, presque toujours 0). Les autres
   ressources (Utilisation Report, Summary) donnent les résultats après coup : non utilisées.
 - **Les `Event ID` repartent de 1 à chaque saison** (avril) : la clé d'un événement est `date#id`.
-- **La ressource change d'id à chaque saison** (l'ancienne devient « (Archive 2025/2026) ») : id connu le
-  22/11/2026 en repli, recherche par nom exact via `package_show` quand la requête échoue (au plus une fois par heure).
+- **La ressource change d'id à chaque saison** : l'ancienne devient « (Archive 2025/2026) » et **répond
+  toujours** (sans nouvelles lignes), donc une erreur ne suffit pas à le voir. Recherche par nom exact via
+  `package_show` au démarrage puis une fois par jour, et aussi (au plus une fois par heure) après un échec ou une
+  lecture vide ; id connu le 22/11/2026 en repli.
+- Les événements de **test** (`Service Requirement Type` = `Test`, une heure, quelques-uns par an) sont gardés et
+  documentés. La clé mémoire d'un événement inclut le sens (`date#id#down`).
 - `datastore_search_sql` renvoie les numériques **en chaînes** (`"224"`, `"0"`) et un 409 avec
   `success: false` pour une ressource inconnue. Le format de `DFS Submission Time_Local` varie
   (`21-11-2026 12:00` / `14/04/2026 12:00`) : ignoré.

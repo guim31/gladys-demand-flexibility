@@ -115,6 +115,8 @@ angekündigt ist.
   wenn ein Gerät hinzugefügt ist oder das Widget angezeigt wird. NESO bittet um
   höchstens 1 Anfrage pro Sekunde an seine API und 2 pro Minute an seinen
   Datastore: weit über dieser Nutzung.
+- Auch die seltenen Testereignisse von NESO (etwa eine Stunde, wenige im
+  Jahr) erscheinen und lösen die Szenen aus wie die anderen.
 - NESO veröffentlicht die geplanten Ereignisse; es kann eines absagen oder
   ändern, was die nächste Abfrage zeigt.
 - Ist das Portal nicht erreichbar, behalten die Geräte die zuletzt gelesenen

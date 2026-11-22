@@ -54,6 +54,10 @@ export const READ_MS = 10 * 60 * 1000;
 export const RETRY_MS = 5 * 60 * 1000;
 /** The resource id is looked up again at most this often after a failure. */
 export const RESOLVE_MS = 60 * 60 * 1000;
+/** …and once a day anyway: an archived resource still answers, without new rows. */
+export const RESOLVE_DAILY_MS = 24 * 60 * 60 * 1000;
+/** The test action reuses a reading this recent. */
+export const ACTION_REUSE_MS = 30 * 1000;
 export const HEARTBEAT_MS = 6 * 60 * 60 * 1000;
 /** Days of history read: enough to show the last event. */
 export const HISTORY_DAYS = 14;
@@ -107,6 +111,7 @@ export function registerHandlers(
   let stopped = false;
   let ticking = null;
   let reading = null;
+  let lastError = null;
 
   const apiIssues = createIssueLog(logger.child('api'));
   const gladysIssues = createIssueLog(logger);
@@ -132,25 +137,38 @@ export function registerHandlers(
 
   // --- Reading NESO -----------------------------------------------------------
 
+  /** Look the resource up again by name; true when it changed. */
+  async function resolve() {
+    lastResolve = now();
+    const found = await resolveResourceId(fetchImpl);
+    if (found === resourceId) {
+      return false;
+    }
+    logger.info(`NESO resource "DFS Service Requirement" is now ${found}`);
+    resourceId = found;
+    return true;
+  }
+
   async function read() {
     lastAttempt = now();
     const since = new Date(now() - HISTORY_DAYS * DAY_MS).toISOString().slice(0, 10);
+    // Once a day, and at start: when a season is archived, the old resource
+    // keeps answering (with no new rows), so an error alone would not tell.
+    if (now() - lastResolve >= RESOLVE_DAILY_MS) {
+      await resolve().catch((err) => logger.debug(`Resource lookup failed: ${err.message}`));
+    }
     let rows;
     try {
       rows = await fetchRows(fetchImpl, resourceId, since);
     } catch (err) {
-      // 404/409: the resource may have been archived and replaced by a new
-      // one; look it up again by name (at most once an hour).
-      if (now() - lastResolve < RESOLVE_MS) {
+      // 404/409: the resource may have been replaced; look it up again (at
+      // most once an hour).
+      if (now() - lastResolve < RESOLVE_MS || !(await resolve())) {
         throw err;
       }
-      lastResolve = now();
-      const found = await resolveResourceId(fetchImpl);
-      if (found === resourceId) {
-        throw err;
-      }
-      logger.info(`NESO resource "DFS Service Requirement" is now ${found}`);
-      resourceId = found;
+      rows = await fetchRows(fetchImpl, resourceId, since);
+    }
+    if (rows.length === 0 && now() - lastResolve >= RESOLVE_MS && (await resolve())) {
       rows = await fetchRows(fetchImpl, resourceId, since);
     }
     return groupEvents(rows);
@@ -176,6 +194,7 @@ export function registerHandlers(
         logger.debug(`${fresh.length} event(s) read`);
         return true;
       } catch (err) {
+        lastError = err;
         apiIssues.fail('read', `NESO events cannot be read: ${err.message}`);
         return false;
       }
@@ -231,6 +250,10 @@ export function registerHandlers(
         memory.seen[event.key] = event.end;
         if (event.end <= t) {
           memory.ended[event.key] = event.end;
+        }
+        // Warnings already passed are not news either.
+        if (event.start > t) {
+          memory.soon[event.key] = LEADS.filter((l) => minutesUntil(event.start, t) <= Number(l));
         }
       }
       memory.initialized = true;
@@ -296,8 +319,9 @@ export function registerHandlers(
         }
       }
     }
+    const current = new Set(events.map((e) => e.key));
     for (const key of Object.keys(memory.soon)) {
-      if (!(key in memory.seen)) {
+      if (!(key in memory.seen) && !current.has(key)) {
         delete memory.soon[key];
         changed = true;
       }
@@ -450,18 +474,13 @@ export function registerHandlers(
     if (config.directions.length === 0) {
       throw new ActionFailure(TEXT.noDevice);
     }
-    lastResolve = -Infinity; // a manual test may look the resource up again
-    try {
-      const fresh = await read();
-      events = fresh;
-      fetchedAt = now();
-      apiIssues.ok('read', 'The NESO Data Portal answers again');
-    } catch (err) {
-      apiIssues.fail('read', `NESO events cannot be read: ${err.message}`);
+    // Repeated clicks reuse a reading less than 30 s old: NESO asks for no
+    // more than 2 datastore queries a minute.
+    const ok =
+      now() - lastAttempt < ACTION_REUSE_MS && reading === null ? !failing() : await refresh();
+    if (!ok || !events) {
       await reportStatus();
-      throw new ActionFailure(MESSAGES.unreachable(err.message));
-    } finally {
-      lastAttempt = now();
+      throw new ActionFailure(MESSAGES.unreachable(lastError?.message ?? 'no answer'));
     }
     await publishStates();
     await reportStatus();
