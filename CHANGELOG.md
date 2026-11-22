@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-22
+
 ### Added
 
 - First version: the Demand Flexibility Service events of NESO (Great Britain),
@@ -22,3 +24,6 @@ the notes of the version's GitHub Release.
 - Dashboard widget "Next DFS event": the event in progress or the next one,
   the upcoming ones and the last one.
 - Texts and documentation in English, French, German and Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-demand-flexibility/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-demand-flexibility/releases/tag/v1.0.0
